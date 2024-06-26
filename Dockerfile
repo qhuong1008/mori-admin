@@ -1,20 +1,27 @@
+# Use a lightweight Node.js image as the base
+FROM node:alpine
 
-FROM node:18-alpine as build-env
-
+# Set working directory
 WORKDIR /app
- 
+
 RUN rm -rf node_modules
 
+# Copy package.json and package-lock.json (or yarn.lock)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --force --no-frozen-lockfile
+
+# Copy all app files (excluding node_modules)
 COPY . .
 
-RUN npm install --force --no-frozen-lockfile && npm run build
+# Install additional dependencies for build process only (optional)
 
-FROM nginx:1.18-alpine as deploy-env
+# Build the React app for production (adjust based on your build command)
+RUN npm run build
 
-WORKDIR /deploy
-
-COPY ./nginx.conf /etc/nginx/nginx.conf
-
-COPY --from=build-env /app/build/ .
-
+# Expose the port where the React app is served (usually 3000)
 EXPOSE 80
+
+# Start the app using the command you specify in your package.json (usually npm start)
+CMD [ "npm", "start" ]
