@@ -27,7 +27,7 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }} # Use secrets for credentials
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+          DOCKER_IMAGE: qhuong1008/mori-admin
         run: |
           docker build -t admin .
           docker tag admin "$DOCKER_IMAGE"
