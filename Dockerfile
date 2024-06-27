@@ -1,5 +1,5 @@
 
-FROM node:18-alpine as build-env
+FROM node:16-alpine as build-env
 
 WORKDIR /app
  
@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm install --force --no-frozen-lockfile && npm run build
 
-FROM nginx:1.18-alpine as deploy-env
+FROM nginx:1.16-alpine as deploy-env
 
 WORKDIR /deploy
 
