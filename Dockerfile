@@ -17,4 +17,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=build-env /app/build/ .
 
-EXPOSE 80
+EXPOSE 3001
