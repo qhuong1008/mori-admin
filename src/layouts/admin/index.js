@@ -16,23 +16,16 @@ import { SidebarContext } from "contexts/SidebarContext";
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
-import { useHistory } from "react-router-dom";
+import * as type from "../../redux/types"
 
 // Custom Chakra theme
 export default function Dashboard(props) {
-  // const isAuthenticated = JSON.parse(localStorage.getItem("authenticated"));
-  // const isAuthenticated = true;
-  const history = useHistory();
-
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   if (user) {
-  //     if (user.role !== 1) {
-  //       history.push("/login");
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== 1) {
+      window.location.href = `${type.FRONTEND_URL_DEV}/login`;
+    }
+  }, []);
 
   const { ...rest } = props;
   // states and functions
