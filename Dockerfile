@@ -1,12 +1,8 @@
-# admin/Dockerfile
-
-# Build stage
-FROM node:18 as build
+FROM node:18
 
 WORKDIR /app
 
 COPY package.json .
-COPY package-lock.json .
 
 RUN npm install
 
@@ -14,9 +10,5 @@ COPY . .
 
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+CMD npm start
 
-COPY --from=build /app/build /usr/share/nginx/html
-
-CMD ["nginx", "-g", "daemon off;"]
