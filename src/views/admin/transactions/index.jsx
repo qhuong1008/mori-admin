@@ -65,6 +65,12 @@ export default function Transactions() {
   }
 
   const handleFilterTransactions = () => {
+    if (fromMonth === "" ||
+      toMonth === "" ||
+      fromYear === "" ||
+      toYear === "") {
+      return;
+    }
     getTransactionByDateRangeData()
   }
 

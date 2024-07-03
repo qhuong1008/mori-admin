@@ -1,20 +1,16 @@
-
-FROM node:18-alpine as build-env
+FROM node:18
 
 WORKDIR /app
- 
-RUN rm -rf node_modules
+
+COPY package.json .
+
+# RUN npm install -g yarn --force
+
+RUN npm install
 
 COPY . .
 
-RUN npm install --force --no-frozen-lockfile && npm run build
+RUN npm run build
 
-FROM nginx:1.18-alpine as deploy-env
+CMD npm start
 
-WORKDIR /deploy
-
-COPY ./nginx.conf /etc/nginx/nginx.conf
-
-COPY --from=build-env /app/build/ .
-
-EXPOSE 80

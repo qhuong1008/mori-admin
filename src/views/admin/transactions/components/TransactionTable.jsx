@@ -34,22 +34,24 @@ const TransactionTable = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredList, setFilteredList] = useState([])
   useEffect(() => {
-    const filteredList = transactions.filter((transaction) => {
-      // Implement your search logic here
-      // For example, search by account name, product details, etc.
-      const searchTextLower = searchTerm.toLowerCase();
-      const accountNameLower = transaction.account.displayName?.toLowerCase(); // Assuming account has a name property
-      const transactionIdLower = transaction._id?.toLowerCase(); // Assuming account has a name property
-      const productTypeLower = transaction.productType?.toLowerCase(); // Assuming account has a name property
-      const amountLower = transaction.amount?.toString().toLowerCase(); // Assuming account has a name property
+    if (transactions.length !== 0) {
+      const filteredList = transactions.filter((transaction) => {
+        // Implement your search logic here
+        // For example, search by account name, product details, etc.
+        const searchTextLower = searchTerm.toLowerCase();
+        const accountNameLower = transaction.account ? transaction.account.displayName?.toLowerCase() : ""; // Assuming account has a name property
+        const transactionIdLower = transaction._id?.toLowerCase(); // Assuming account has a name property
+        const productTypeLower = transaction.productType?.toLowerCase(); // Assuming account has a name property
+        const amountLower = transaction.amount?.toString().toLowerCase(); // Assuming account has a name property
 
-      return accountNameLower?.includes(searchTextLower) ||
-        transactionIdLower?.includes(searchTextLower) ||
-        productTypeLower?.includes(searchTextLower) ||
-        amountLower?.includes(searchTextLower)
-    });
+        return accountNameLower?.includes(searchTextLower) ||
+          transactionIdLower?.includes(searchTextLower) ||
+          productTypeLower?.includes(searchTextLower) ||
+          amountLower?.includes(searchTextLower)
+      });
 
-    setFilteredList(filteredList);
+      setFilteredList(filteredList);
+    }
   }, [searchTerm, transactions]);
 
   useEffect(() => {
@@ -159,7 +161,7 @@ const TransactionTable = (props) => {
               filteredList.map(transactionItem => (
                 <Tr>
                   <Td>{transactionItem._id}</Td>
-                  <Td>{transactionItem.account.displayName}</Td>
+                  <Td>{transactionItem.account ? transactionItem.account.displayName : "Deleted account"}</Td>
                   <Td>{transactionItem.productType == "Book" ? "Sách mua lẻ" : "Hội viên"}</Td>
                   <Td>{transactionItem.product}</Td>
                   <Td>{utils.convertMongoDBTimeToHourMinDate(transactionItem.time)}</Td>
