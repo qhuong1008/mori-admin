@@ -18,4 +18,4 @@ RUN npm run build
 from nginx:1.18 as deploy-stage
 WORKDIR /deploy
 COPY --from=build-stage /app/build .
-COPY nginx.conf /etc/nginx/nginx/conf
+COPY nginx.conf /etc/nginx/nginx.conf
