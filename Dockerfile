@@ -1,14 +1,19 @@
-FROM node:18
+#stage 1: build
+FROM node:18 as build-stage
 
 WORKDIR /app
 
-COPY package.json .
+COPY package.json package.json
+COPY package-lock.json package-lock.json
 
 RUN npm install
 
+# stage 2: build
 COPY . .
 
 RUN npm run build
 
-CMD npm start
-
+from nginx:1.18 as deploy-stage
+WORKDIR /deploy
+COPY --from=build-stage /app/build .
+COPY nginx.conf /etc/nginx/nginx.conf
