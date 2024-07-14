@@ -38,14 +38,16 @@ export default function Dashboard(props) {
     //   }
     // }
 
-    authenticateAdminRequest((resp) => {
-      if (resp.error) {
-        history.push("/login");
-      }
-      if (resp.message) {
-        setIsAdmin(true);
-      }
-    }).then(() => setIsLoading(false));
+    authenticateAdminRequest()
+      .then((resp) => {
+        if (resp.error) {
+          history.push("/login");
+        }
+        if (resp.message) {
+          setIsAdmin(true);
+        }
+      })
+      .then(() => setIsLoading(false));
   }, []);
 
   const { ...rest } = props;
