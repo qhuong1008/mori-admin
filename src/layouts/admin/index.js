@@ -17,22 +17,36 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
 import { useHistory } from "react-router-dom";
+import { authenticateAdminRequest } from "../../redux/saga/requests/auth";
 
 // Custom Chakra theme
 export default function Dashboard(props) {
   // const isAuthenticated = JSON.parse(localStorage.getItem("authenticated"));
   // const isAuthenticated = true;
   const history = useHistory();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   if (user) {
-  //     if (user.role !== 1) {
-  //       history.push("/login");
-  //     }
-  //   }
-  // }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    // const token = localStorage.getItem("token");
+    // console.log("token", token);
+    // if (token) {
+    //   const decodedToken = jwtDecode(token);
+    //   if (decodedToken.role !== 1) {
+    //     history.push("/login");
+    //   }
+    // }
+
+    authenticateAdminRequest((resp) => {
+      if (resp.error) {
+        history.push("/login");
+      }
+      if (resp.message) {
+        setIsAdmin(true);
+      }
+    }).then(() => setIsLoading(false));
+  }, []);
 
   const { ...rest } = props;
   // states and functions
@@ -137,6 +151,14 @@ export default function Dashboard(props) {
   document.documentElement.dir = "ltr";
   const { onOpen } = useDisclosure();
   document.documentElement.dir = "ltr";
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!isAdmin) {
+    return <div>Unauthorized</div>;
+  }
+
   return (
     <Box>
       <Box>
@@ -165,7 +187,7 @@ export default function Dashboard(props) {
               <Box>
                 <Navbar
                   onOpen={onOpen}
-                  logoText={"Horizon UI Dashboard PRO"}
+                  logoText={"Mori Admin"}
                   brandText={getActiveRoute(routes)}
                   secondary={getActiveNavbar(routes)}
                   message={getActiveNavbarText(routes)}
