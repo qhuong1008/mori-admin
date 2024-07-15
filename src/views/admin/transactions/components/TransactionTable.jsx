@@ -26,18 +26,22 @@ import { SearchBar } from "components/navbar/searchBar/SearchBar";
 import { Toaster } from "react-hot-toast";
 import { getAllTransactionsRequest } from "../../../../redux/saga/requests/transaction";
 import * as utils from '../../../../utils/utils'
+import { CSVDownload, CSVLink } from "react-csv";
+
+
 const TransactionTable = (props) => {
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const isLoading = props.isLoading;
   const transactions = props.transactions;
+  const [exportToCsvData, setExportToCsvData] = useState([])
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredList, setFilteredList] = useState([])
+
   useEffect(() => {
     if (transactions.length !== 0) {
       const filteredList = transactions.filter((transaction) => {
-        // Implement your search logic here
-        // For example, search by account name, product details, etc.
         const searchTextLower = searchTerm.toLowerCase();
         const accountNameLower = transaction.account ? transaction.account.displayName?.toLowerCase() : ""; // Assuming account has a name property
         const transactionIdLower = transaction._id?.toLowerCase(); // Assuming account has a name property
@@ -56,6 +60,19 @@ const TransactionTable = (props) => {
 
   useEffect(() => {
     setFilteredList(transactions)
+    if (transactions !== null) {
+      const updatedData = transactions.map((t) => ({
+        _id: t._id,
+        account: t.account ? t.account._id : "",
+        accountName: t.account ? t.account.displayName : "Deleted account",
+        product: t.product,
+        productType: t.productType,
+        time: t.time,
+        status: t.status,
+        amount: t.amount
+      }))
+      setExportToCsvData(updatedData)
+    }
   }, [transactions])
   return (
     <Card
@@ -77,8 +94,9 @@ const TransactionTable = (props) => {
         >
           Danh sách giao dịch
         </Text>
-        <Link href="/admin/tag/new">
-          <Button>
+
+        <CSVLink data={exportToCsvData} filename={"transaction.csv"} target="_blank">
+          <Button >
             <Icon
               as={MdDownload}
               width="20px"
@@ -88,7 +106,8 @@ const TransactionTable = (props) => {
             />
             Export to csv
           </Button>
-        </Link>
+
+        </CSVLink  >
       </Flex>
       <Table variant="simple" color="gray.500" mb="24px">
         <Thead>
