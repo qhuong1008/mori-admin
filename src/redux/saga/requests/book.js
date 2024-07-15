@@ -56,6 +56,30 @@ export const addNewChapterRequest = async (request) => {
     });
 };
 
+export const getAllChaptersByBookIdRequest = async (bookId) => {
+  return fetch(
+    `${type.BACKEND_URL_DEV}/api/chapter/get-chapter/book/${bookId}`,
+    {
+      method: "GET",
+      headers: type.requestHeader,
+    }
+  )
+    .then((response) => response.json())
+    .catch((error) => {
+      throw error;
+    });
+};
+export const deleteChapterByIdRequest = async (id) => {
+  return fetch(`${type.BACKEND_URL_DEV}/api/chapter/${id}`, {
+    method: "DELETE",
+    headers: type.requestHeader,
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      throw error;
+    });
+};
+
 export const updateBookRequest = async (id, request) => {
   return fetch(`${type.BACKEND_URL_DEV}/api/book/${id}`, {
     method: "PATCH",
@@ -70,10 +94,8 @@ export const updateBookRequest = async (id, request) => {
 
 export const uploadNewChapterRequest = async (newChapter) => {
   const formData = new FormData();
-  formData.append("audio", newChapter.audio);
-  formData.append("book_id", newChapter.book_id);
-
-  return fetch(`${type.BACKEND_URL_DEV}/api/azure/upload/chapter`, {
+  formData.append("file", newChapter.audio);
+  return fetch(`${type.BACKEND_URL_DEV}/api/book/upload-audio`, {
     method: "POST",
     body: formData,
   })

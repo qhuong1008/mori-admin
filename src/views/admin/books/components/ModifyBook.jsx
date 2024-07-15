@@ -23,6 +23,7 @@ import {
   useDisclosure,
   UnorderedList,
   ListItem,
+  Icon,
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import React, { useState } from "react";
@@ -30,13 +31,14 @@ import Loading from "components/loading/Loading";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-import { getBookByIdRequest } from "../../../../redux/saga/requests/book";
+import { addNewChapterRequest, deleteChapterByIdRequest, getAllChaptersByBookIdRequest, getBookByIdRequest } from "../../../../redux/saga/requests/book";
 import { Toaster, toast } from "react-hot-toast";
 import { getAllTagsRequest } from "../../../../redux/saga/requests/tag"; import { updateBookRequest } from "../../../../redux/saga/requests/book";
 import { uploadBookImageRequest } from "../../../../redux/saga/requests/book";
 import { uploadBookEpubRequest } from "../../../../redux/saga/requests/book";
 import { uploadNewChapterRequest } from "../../../../redux/saga/requests/book";
 import * as type from '../../../../redux/types'
+import { MdRemoveCircle } from "react-icons/md";
 
 
 const ModifyBook = () => {
@@ -71,7 +73,8 @@ const ModifyBook = () => {
   const { isOpen: isOpenAudio, onOpen: onOpenAudio, onClose: onCloseAudio } = useDisclosure()
   const { isOpen: isOpenEpub, onOpen: onOpenEpub, onClose: onCloseEpub } = useDisclosure()
   const [reload, setReload] = useState(0)
-
+  const [chapters, setChapters] = useState([])
+  const [isLoadingChapters, setIsLoadingChapters] = useState(false)
   const handleAddNewTag = () => {
     if (newTag !== '') {
       setTags([...tags, newTag]);
@@ -157,9 +160,13 @@ const ModifyBook = () => {
             .then((resp) => {
               if (resp.error) {
                 reject(resp.message)
+                getChaptersData()
               }
               else {
                 resolve(resp.message)
+                console.log("resp", resp)
+                const newChapterRequest = { book_id: id, name: audioName, audio: resp.filename }
+                addNewChapterRequest(newChapterRequest)
                 setReload(p => p + 1)
               }
             })
@@ -171,6 +178,7 @@ const ModifyBook = () => {
           error: (error) => error.message,
         }
       );
+      onCloseAudio()
     }
   }
   const handleUpdateBook = async () => {
@@ -216,6 +224,39 @@ const ModifyBook = () => {
 
   }
 
+  const getChaptersData = () => {
+    setIsLoadingChapters(true)
+    getAllChaptersByBookIdRequest(id)
+      .then(resp => {
+        if (resp.data) {
+          setChapters(resp.data)
+        }
+      })
+    setIsLoadingChapters(false)
+  }
+  const handleRemoveChapter = (chapterId) => {
+    toast.promise(
+      new Promise((resolve, reject) => {
+        deleteChapterByIdRequest(chapterId)
+          .then((resp) => {
+            if (resp.message) {
+              resolve(resp.message)
+              getChaptersData()
+            }
+            else {
+              reject("Delete error!");
+            }
+          })
+
+      }),
+      {
+        loading: "Uploading...",
+        success: (message) => message,
+        error: (error) => error.message,
+      }
+    );
+  }
+
   useEffect(() => {
     getBookByIdRequest(id)
       .then(res => setBook(res.book))
@@ -236,6 +277,7 @@ const ModifyBook = () => {
       setCurrentImage(book.image)
       setAccessLevel(book.access_level)
       setBookChapters(book.chapters)
+      getChaptersData()
     }
   }, [book])
 
@@ -464,6 +506,48 @@ const ModifyBook = () => {
                       bookChapters.map((chapter) => (
                         <ListItem>
                           <a href={chapter.audio}>{chapter.name}</a></ListItem>
+                      ))
+                      :
+                      <></>
+                  }
+                </UnorderedList>
+              </Flex>
+              <Button
+                width="auto"
+                colorScheme="blue"
+                variant='outline'
+                onClick={() => { onOpenAudio() }}
+              >
+                Upload audio
+              </Button>
+            </Flex>
+          </Flex>
+          <Flex
+            mx="25px"
+            my="5px"
+            paddingBottom={"30px"}
+            flexDirection="row"
+            alignItems="center"
+          >
+            <FormLabel w="148px">Chapters</FormLabel>
+            <Flex w="100%" justifyContent={"space-between"}>
+              <Flex flexWrap={"wrap"} w="90%" marginRight={"10px"}>
+                <UnorderedList>
+                  {
+                    !isLoadingChapters ?
+                      chapters.map((chapter) => (
+                        <ListItem>
+                          {chapter.name}
+                          <span><Icon
+                            as={MdRemoveCircle}
+                            width="20px"
+                            height="20px"
+                            color="inherit"
+                            cursor="pointer"
+                            style={{ marginLeft: "4px" }}
+                            onClick={() => handleRemoveChapter(chapter._id)}
+                          /></span>
+                        </ListItem>
                       ))
                       :
                       <></>
