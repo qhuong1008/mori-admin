@@ -13,7 +13,7 @@ import Loading from "components/loading/Loading";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-import { getAccountByIdRequest } from "../../../../redux/saga/requests/account";
+import { getAccountByIdRequest, getMembershipByIdRequest } from "../../../../redux/saga/requests/account";
 import { Toaster, toast } from "react-hot-toast";
 import { updateAccountRequest } from "../../../../redux/saga/requests/account";
 
@@ -31,10 +31,12 @@ const ModifyAccount = () => {
   const [username, setUsername] = useState("")
   const [displayName, setDisplayName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
+  const [isMember, setIsMember] = useState("")
   const [password, setPassword] = useState("")
   const [retypePassword, setRetypePassword] = useState("")
   const [role, setRole] = useState(0)
   const [isBlocked, setIsBlocked] = useState("")
+  const [membership, setMembership] = useState(null)
 
   const handleUpdateAccount = async () => {
     const request = {
@@ -69,9 +71,18 @@ const ModifyAccount = () => {
     );
   }
 
+  const getMembershipData = (id) => {
+    getMembershipByIdRequest(id).then(resp => {
+      if (resp.membership) {
+        setMembership(resp.membership)
+      }
+    })
+  }
+
   useEffect(() => {
     getAccountByIdRequest(id).then(res => {
       setAccount(res.account)
+      getMembershipData(id)
     })
   }, [])
   useEffect(() => {
@@ -83,6 +94,7 @@ const ModifyAccount = () => {
       setPhoneNumber(account.phoneNumber)
       setRole(account.role)
       setIsBlocked(account.is_blocked)
+      setIsMember(account.is_member)
     }
   }, [account])
 
@@ -170,19 +182,6 @@ const ModifyAccount = () => {
                 <option value="1">Admin</option>
               </Select>
             </Flex>
-            {/* <Flex
-              mx="25px"
-              my="5px"
-              justifyContent="center"
-              flexDirection="row"
-              alignItems="center"
-            >
-              <FormLabel w="150px">Is member</FormLabel>
-              <Select value={is_member}>
-                <option value="0">True</option>
-                <option value="1">False</option>
-              </Select>
-            </Flex> */}
             <Flex
               mx="25px"
               my="5px"
@@ -195,6 +194,46 @@ const ModifyAccount = () => {
                 <option value={true}>True</option>
                 <option value={false}>False</option>
               </Select>
+            </Flex>
+            <Flex
+              mx="25px"
+              my="5px"
+              justifyContent="center"
+              flexDirection="row"
+              alignItems="center"
+            >
+              <FormLabel w="150px">Is member</FormLabel>
+              <Input value={isMember} disabled />
+            </Flex>
+            <Flex
+              mx="25px"
+              my="5px"
+              justifyContent="center"
+              flexDirection="row"
+              alignItems="center"
+            >
+              <FormLabel w="150px">Membership duration</FormLabel>
+              <Input value={membership.type} disabled />
+            </Flex>
+            <Flex
+              mx="25px"
+              my="5px"
+              justifyContent="center"
+              flexDirection="row"
+              alignItems="center"
+            >
+              <FormLabel w="150px">Membership start date</FormLabel>
+              <Input value={membership.start_date} disabled />
+            </Flex>
+            <Flex
+              mx="25px"
+              my="5px"
+              justifyContent="center"
+              flexDirection="row"
+              alignItems="center"
+            >
+              <FormLabel w="150px">Membership end date</FormLabel>
+              <Input value={membership.outdated_on} disabled />
             </Flex>
             <Button
               width="100px"

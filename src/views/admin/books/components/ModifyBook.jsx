@@ -151,6 +151,7 @@ const ModifyBook = () => {
     else {
       const newChapter = {
         book_id: book._id,
+        name: book.name,
         audio: uploadedAudio
       }
       console.log("newChapter", newChapter)
@@ -159,7 +160,7 @@ const ModifyBook = () => {
           uploadNewChapterRequest(newChapter)
             .then((resp) => {
               if (resp.error) {
-                reject(resp.message)
+                reject(resp.error)
                 getChaptersData()
               }
               else {

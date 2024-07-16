@@ -75,3 +75,21 @@ export const getCurrentAccountRequest = async (account) => {
       throw error;
     });
 };
+export const getMembershipByIdRequest = async (userId) => {
+  return fetch(
+    `${type.BACKEND_URL_DEV}/api/membership/get-membership/${userId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+
+    .catch((error) => {
+      throw error;
+    });
+};
