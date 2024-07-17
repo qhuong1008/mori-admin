@@ -213,7 +213,7 @@ const ModifyAccount = () => {
               alignItems="center"
             >
               <FormLabel w="150px">Membership duration</FormLabel>
-              <Input value={membership.type} disabled />
+              <Input value={membership ? membership.type : ""} disabled />
             </Flex>
             <Flex
               mx="25px"
@@ -223,7 +223,7 @@ const ModifyAccount = () => {
               alignItems="center"
             >
               <FormLabel w="150px">Membership start date</FormLabel>
-              <Input value={membership.start_date} disabled />
+              <Input value={membership ? membership.start_date : ""} disabled />
             </Flex>
             <Flex
               mx="25px"
@@ -233,7 +233,7 @@ const ModifyAccount = () => {
               alignItems="center"
             >
               <FormLabel w="150px">Membership end date</FormLabel>
-              <Input value={membership.outdated_on} disabled />
+              <Input value={membership ? membership.outdated_on : ""} disabled />
             </Flex>
             <Button
               width="100px"
