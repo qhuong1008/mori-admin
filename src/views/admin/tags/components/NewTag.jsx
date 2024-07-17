@@ -26,7 +26,7 @@ const NewTag = () => {
       new Promise((resolve, reject) => {
         createTagRequest(request)
           .then((resp) => {
-            if (resp.newTag) {
+            if (resp.message) {
               resolve("Thêm tag thành công!")
               window.location.replace("/admin/tags");
               console.log("resp", resp)

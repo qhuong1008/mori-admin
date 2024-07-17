@@ -21,6 +21,7 @@ import {
   MdEdit,
   MdRemoveCircle,
   MdAdd,
+  MdCardMembership,
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "components/loading/Loading";
@@ -136,7 +137,7 @@ const DevelopmentTable = () => {
                     fontSize={{ sm: "10px", lg: "12px" }}
                     color="gray.400"
                   >
-                    phone number
+                    Is member
                   </Flex>
                 </Th>
                 <Th pe="10px" borderColor={borderColor}>
@@ -175,7 +176,7 @@ const DevelopmentTable = () => {
                       </Td>
                       <Td>{acct.email}</Td>
                       <Td>{acct.displayName}</Td>
-                      <Td>{acct.phoneNumber}</Td>
+                      <Td>{acct.is_member === true ? "true" : "false"}</Td>
                       <Td>{acct.role}</Td>
                       <Td>{acct.is_blocked ? "true" : "false"}</Td>
                       <Td>
@@ -209,7 +210,7 @@ const DevelopmentTable = () => {
             </Tbody>
           </Table>
         </>}
-    </Card>
+    </Card >
 
   );
 }
